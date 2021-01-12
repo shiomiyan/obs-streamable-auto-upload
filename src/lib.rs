@@ -27,7 +27,6 @@ pub fn upload(filepath: &str) -> Result<()> {
     Ok(())
 }
 
-
 #[cfg(test)]
 mod tests {
     use crate::upload;
@@ -35,9 +34,11 @@ mod tests {
     #[test]
     fn streamable_upload() {
         let result = upload("./media/sample.mp4");
+        dbg!(&result);
+
         match result {
             Ok(v) => println!("{:?}", v),
-            Err(e) => panic!("Error: {}", e)
+            Err(e) => panic!("Error: {}", e),
         }
     }
 }
