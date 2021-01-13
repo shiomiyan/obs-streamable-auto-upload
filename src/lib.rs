@@ -1,9 +1,8 @@
 use dotenv::dotenv;
-use reqwest::{blocking::multipart, blocking::Client, Result};
+use reqwest::{blocking::multipart, blocking::Client, blocking::Response, Result};
 use std::env;
 
-
-pub fn upload(filepath: &str) -> Result<()> {
+pub fn upload(filepath: &str) -> Result<Response> {
     dotenv().ok();
     let username = env::var("STREAMABLE_USERNAME").unwrap();
     let password = env::var("STREAMABLE_PASSWORD").unwrap();
@@ -24,7 +23,7 @@ pub fn upload(filepath: &str) -> Result<()> {
 
     // dbg!(&resp);
 
-    Ok(())
+    Ok(resp)
 }
 
 #[cfg(test)]
