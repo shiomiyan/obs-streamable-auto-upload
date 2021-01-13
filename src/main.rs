@@ -5,7 +5,7 @@ use uploader::{setup, upload};
 
 fn main() {
     let matches = App::new("streamable-upload")
-        .version("0.1.1")
+        .version("0.1")
         .about("upload your video to streamable")
         .author("shiomiya")
         .subcommand(
