@@ -1,1 +1,5 @@
-use nightly build
+```
+# .env
+STREAMABLE_USERNAME=xxx
+STREAMABLE_PASSWORD=xxx
+```
