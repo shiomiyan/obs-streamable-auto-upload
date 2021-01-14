@@ -1,5 +1,4 @@
 use clap::{App, Arg};
-
 use uploader::{setup, upload};
 
 fn main() {
