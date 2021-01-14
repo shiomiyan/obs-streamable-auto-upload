@@ -1,11 +1,16 @@
-use reqwest::{blocking::multipart, blocking::Client, blocking::Response, Result};
+use reqwest::{blocking::multipart, blocking::Client, Result};
+use serde::{Deserialize, Serialize};
 use std::env;
 use std::io::prelude::*;
 
-pub fn upload(filepath: &str) -> Result<Response> {
-    let home_path = dirs::home_dir()
-        .and_then(|a| Some(a.join(".streamable")))
-        .unwrap();
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UploadResponse {
+    pub shortcode: String,
+    pub status: i8,
+}
+
+pub fn upload(filepath: &str) -> Result<UploadResponse> {
+    let home_path = dirs::home_dir().map(|a| a.join(".streamable")).unwrap();
 
     dotenv::from_path(home_path.as_path()).unwrap();
 
@@ -26,9 +31,9 @@ pub fn upload(filepath: &str) -> Result<Response> {
         .send()
         .unwrap_or_else(|e| panic!("Error: {}", e));
 
-    // dbg!(&resp);
+    let response_as_json = resp.json::<UploadResponse>().unwrap();
 
-    Ok(resp)
+    Ok(response_as_json)
 }
 
 pub fn get_username_password() -> (String, String) {
@@ -56,7 +61,10 @@ pub fn setup() -> Result<()> {
         .write_all(text.as_bytes())
         .unwrap();
 
-    println!("saved your login params in {}", home_path.to_str().unwrap());
+    println!(
+        "saved your login params in {} as .streamable",
+        home_path.to_str().unwrap()
+    );
     Ok(())
 }
 
@@ -66,12 +74,6 @@ mod tests {
 
     #[test]
     fn streamable_upload() {
-        let result = upload("./media/sample.mp4");
-        dbg!(&result);
-
-        match result {
-            Ok(v) => println!("{:?}", v),
-            Err(e) => panic!("Error: {}", e),
-        }
+        let _ = upload("./media/sample.mp4").unwrap();
     }
 }

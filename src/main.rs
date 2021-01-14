@@ -1,5 +1,4 @@
 use clap::{App, Arg};
-use reqwest::StatusCode;
 
 use uploader::{setup, upload};
 
@@ -9,14 +8,12 @@ fn main() {
         .about("upload your video to streamable")
         .author("shiomiya")
         .subcommand(
-            App::new("upload")
-                .about("input path to your video")
-                .arg(
-                    Arg::new("PATH")
-                        .about("input video path")
-                        .value_name("PATH")
-                        .takes_value(true)
-                )
+            App::new("upload").about("input path to your video").arg(
+                Arg::new("PATH")
+                    .about("input video path")
+                    .value_name("PATH")
+                    .takes_value(true),
+            ),
         )
         .subcommand(App::new("setup").about("set your streamable.com username and password"))
         .get_matches();
@@ -24,9 +21,16 @@ fn main() {
     if let Some(ref matches) = matches.subcommand_matches("upload") {
         let path = matches.value_of("PATH").unwrap();
         let response = upload(path).unwrap();
-        match response.status() {
-            StatusCode::OK => println!("Upload sccess!"),
-            s => println!("Received response status: {:?}", s),
+        match response.status {
+            1 => {
+                let shortlink = format!("https://www.streamable.com/{}", response.shortcode);
+                println!("Upload success! check {}", shortlink);
+                std::process::exit(0)
+            }
+            _ => {
+                println!("Failed to upload.");
+                std::process::exit(1)
+            }
         }
     }
 
